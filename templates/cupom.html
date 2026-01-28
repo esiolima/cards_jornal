@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8" />
+<title>Cupom de Desconto</title>
+
+<style>
+@font-face {
+  font-family: 'Montserrat';
+  src: url('../fonts/Montserrat-Regular.ttf') format('truetype');
+  font-weight: 400;
+}
+@font-face {
+  font-family: 'Montserrat';
+  src: url('../fonts/Montserrat-Bold.ttf') format('truetype');
+  font-weight: 700;
+}
+@font-face {
+  font-family: 'Montserrat';
+  src: url('../fonts/Montserrat-Black.ttf') format('truetype');
+  font-weight: 900;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('../fonts/Inter-Regular.ttf') format('truetype');
+}
+
+* {
+  box-sizing: border-box;
+  font-family: Inter, sans-serif;
+}
+
+body {
+  margin: 0;
+  width: 1400px;
+  height: 2115px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #ffffff;
+  color: #1F3C6E;
+}
+
+.upper { text-transform: uppercase; }
+.text-wrap { text-align: center; }
+
+/* ================= CARD ================= */
+.card {
+  width: 1400px;
+  height: 2115px;
+  border: 12px solid #F2C94C;
+  border-radius: 96px;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ================= LOGO ================= */
+.logo {
+  margin-top: 60px; /* REDUZIDO */
+}
+.logo img {
+  max-height: 420px;
+  max-width: 900px;
+  object-fit: contain;
+}
+
+/* ================= TEXTO ================= */
+.condicao {
+  margin-top: 32px;
+  max-width: 1120px;
+  font-size: 56px;
+  line-height: 64px;
+}
+
+/* ================= GANHE ================= */
+.ganhe {
+  margin-top: 32px;
+  font-family: Montserrat, sans-serif;
+  font-size: 96px; /* +50% */
+  font-weight: 700;
+}
+
+/* ================= VALOR ================= */
+.percentual {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.numero {
+  font-family: Montserrat, sans-serif;
+  font-weight: 900;
+  font-size: 540px;
+}
+
+.percent {
+  font-family: Montserrat, sans-serif;
+  font-weight: 900;
+  font-size: 360px;
+  margin-left: 12px;
+  margin-bottom: 40px;
+}
+
+.desconto {
+  margin-top: 6px;
+  font-family: Montserrat, sans-serif;
+  font-size: 120px;
+  font-weight: 700;
+}
+
+/* ================= LEGAL ================= */
+.legal {
+  margin-top: 28px;
+  max-width: 1000px;
+  font-size: 36px;
+  line-height: 44px;
+}
+
+/* ================= CUPOM ================= */
+.cupom-box {
+  margin-top: 48px;
+  width: 1200px;
+  height: 420px; /* AUMENTADO */
+  background: #16A7E0;
+  border-radius: 40px;
+  display: grid;
+  grid-template-columns: 180px 1fr;
+}
+
+.cupom-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cupom-label span {
+  transform: rotate(-90deg);
+  font-family: Montserrat, sans-serif;
+  font-size: 32px; /* METADE DO TAMANHO */
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.cupom-codigo {
+  display: flex;
+  align-items: center;
+  padding-left: 40px;
+  font-family: Montserrat, sans-serif;
+  font-size: 160px;
+  font-weight: 900;
+  color: #ffffff;
+}
+
+/* ================= RODAPÉ ================= */
+.uf {
+  margin-top: 32px;
+  font-family: Montserrat, sans-serif;
+  font-size: 44px;
+  font-weight: 700;
+}
+
+.segmento-label {
+  margin-top: 12px;
+  font-size: 36px;
+}
+
+.segmento-valor {
+  margin-top: 6px;
+  font-family: Montserrat, sans-serif;
+  font-size: 50px;
+  font-weight: 700;
+}
+</style>
+</head>
+
+<body>
+<div class="card">
+
+  <div class="logo">
+    <img src="{{LOGO}}" alt="Logo">
+  </div>
+
+  <div class="condicao upper text-wrap">{{TEXTO}}</div>
+
+  <div class="ganhe upper">GANHE</div>
+
+  <div class="percentual">
+    <div class="numero">{{VALOR}}</div>
+    <div class="percent">%</div>
+  </div>
+
+  <div class="desconto upper">DE DESCONTO</div>
+
+  <div class="legal upper text-wrap">{{LEGAL}}</div>
+
+  <div class="cupom-box">
+    <div class="cupom-label"><span class="upper">CUPOM</span></div>
+    <div class="cupom-codigo upper">{{CUPOM}}</div>
+  </div>
+
+  <div class="uf upper">{{UF}}</div>
+  <div class="segmento-label upper">SEGMENTO DE CLIENTES:</div>
+  <div class="segmento-valor upper">{{SEGMENTO}}</div>
+
+</div>
+</body>
+</html>

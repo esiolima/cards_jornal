@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8" />
+<title>Queda de Preço</title>
+
+<style>
+@font-face {
+  font-family: 'Montserrat';
+  src: url('../fonts/Montserrat-Regular.ttf') format('truetype');
+  font-weight: 400;
+}
+@font-face {
+  font-family: 'Montserrat';
+  src: url('../fonts/Montserrat-Bold.ttf') format('truetype');
+  font-weight: 700;
+}
+@font-face {
+  font-family: 'Montserrat';
+  src: url('../fonts/Montserrat-Black.ttf') format('truetype');
+  font-weight: 900;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('../fonts/Inter-Regular.ttf') format('truetype');
+  font-weight: 400;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('../fonts/Inter-Bold.ttf') format('truetype');
+  font-weight: 700;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: #eef6ff;
+  display: flex;
+  justify-content: center;
+}
+
+.upper { text-transform: uppercase; }
+
+.text-wrap {
+  max-width: 1200px;
+  text-align: center;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.15;
+}
+
+.card {
+  width: 1400px;
+  height: 2115px;
+  background: #ffffff;
+  border-radius: 140px;
+  border: 12px solid #F2C94C;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #1F3C6E;
+  font-family: Inter, sans-serif;
+}
+
+/* 🔥 LOGO +80% */
+.logo {
+  margin-top: 90px;
+}
+.logo img {
+  max-height: 360px;   /* antes ~200 */
+  max-width: 1100px;   /* antes ~620 */
+  object-fit: contain;
+}
+
+.queda-box {
+  margin-top: 80px;
+  background: #1F3C6E;
+  color: #ffffff;
+  padding: 48px 160px;
+  border-radius: 999px;
+  font-family: Montserrat;
+  font-weight: 900;
+  font-size: 96px;
+}
+
+.ate {
+  margin-top: 60px;
+  font-size: 72px;
+  font-weight: 700;
+}
+
+.percentual {
+  margin-top: 20px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  min-width: 700px;
+  font-family: Montserrat;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.percentual .numero {
+  font-size: 520px;
+}
+.percentual .percent {
+  font-size: 220px;
+  margin-left: 10px;
+  margin-bottom: 70px;
+}
+
+.texto {
+  margin-top: 50px;
+  font-size: 64px;
+  font-weight: 700;
+  min-height: 140px;
+}
+
+.legal {
+  margin-top: 60px;
+  font-size: 38px;
+  min-height: 120px;
+}
+
+.urn {
+  margin-top: 40px;
+  font-size: 46px;
+  font-weight: 700;
+}
+
+.segmento-label {
+  margin-top: 24px;
+  font-size: 38px;
+}
+
+.segmento-valor {
+  font-size: 54px;
+  font-weight: 700;
+  min-height: 80px;
+}
+</style>
+</head>
+
+<body>
+<div class="card">
+
+  <div class="logo">
+    <img src="{{LOGO}}" alt="Logo do fornecedor">
+  </div>
+
+  <div class="queda-box upper">QUEDA DE PREÇO</div>
+  <div class="ate upper">ATÉ</div>
+
+  <div class="percentual upper">
+    <div class="numero">{{VALOR}}</div>
+    <div class="percent">%</div>
+  </div>
+
+  <div class="texto text-wrap upper">{{TEXTO}}</div>
+
+  <div class="legal text-wrap upper">{{LEGAL}}</div>
+
+  <div class="urn upper">URN: {{UF}}</div>
+
+  <div class="segmento-label upper">SEGMENTO DE CLIENTES:</div>
+  <div class="segmento-valor text-wrap upper">{{SEGMENTO}}</div>
+
+</div>
+</body>
+</html>

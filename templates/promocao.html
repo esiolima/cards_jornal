@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8" />
+<title>Promoção</title>
+
+<style>
+@font-face {
+  font-family: 'Montserrat';
+  src: url('../fonts/Montserrat-Regular.ttf') format('truetype');
+  font-weight: 400;
+}
+@font-face {
+  font-family: 'Montserrat';
+  src: url('../fonts/Montserrat-Bold.ttf') format('truetype');
+  font-weight: 700;
+}
+@font-face {
+  font-family: 'Montserrat';
+  src: url('../fonts/Montserrat-Black.ttf') format('truetype');
+  font-weight: 900;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('../fonts/Inter-Regular.ttf') format('truetype');
+  font-weight: 400;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('../fonts/Inter-Bold.ttf') format('truetype');
+  font-weight: 700;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #1F3C6E;
+  font-family: Inter, sans-serif;
+}
+
+/* CARD */
+.card {
+  width: 1400px;
+  height: 2115px;
+  background: #ffffff;
+  border-radius: 140px; /* PADRÃO FINAL */
+  border: 12px solid #F2C94C;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* LOGO */
+.logo {
+  margin-top: 90px;
+}
+.logo img {
+  max-height: 160px;
+  max-width: 520px;
+  object-fit: contain;
+}
+
+/* FAIXA PROMOÇÃO */
+.faixa-promocao {
+  margin-top: 70px;
+  background: #F26A21;
+  color: #ffffff;
+  padding: 26px 140px;
+  border-radius: 999px;
+  font-family: Montserrat, sans-serif;
+  font-weight: 900;
+  font-size: 92px;
+  text-transform: uppercase;
+}
+
+/* CONDIÇÃO */
+.condicao {
+  margin-top: 70px;
+  max-width: 1120px;
+  text-align: center;
+  font-size: 56px;
+  line-height: 64px;
+  text-transform: uppercase;
+}
+
+/* BENEFÍCIO */
+.beneficio {
+  margin-top: 90px;
+  text-align: center;
+  line-height: 1.05;
+  font-family: Montserrat, sans-serif;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.beneficio-texto {
+  font-size: 200px;
+}
+
+/* LEGAL */
+.legal {
+  margin-top: 80px;
+  max-width: 1050px;
+  text-align: center;
+  font-size: 40px;
+  line-height: 48px;
+  text-transform: uppercase;
+}
+
+/* UF */
+.uf {
+  margin-top: 100px;
+  font-size: 56px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+/* SEGMENTO */
+.segmento-label {
+  margin-top: 40px;
+  font-size: 40px;
+  text-transform: uppercase;
+}
+
+.segmento-valor {
+  margin-top: 14px;
+  font-size: 56px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+</style>
+</head>
+
+<body>
+
+  <div class="card">
+
+    <div class="logo">
+      <img src="{{LOGO}}" alt="Logo do fornecedor">
+    </div>
+
+    <div class="faixa-promocao">PROMOÇÃO</div>
+
+    <div class="condicao">
+      {{TEXTO}}
+    </div>
+
+    <!-- TEXTO DE BENEFÍCIO VEM 100% DA PLANILHA -->
+    <div class="beneficio">
+      <div class="beneficio-texto">{{VALOR}}</div>
+    </div>
+
+    <div class="legal">
+      {{LEGAL}}
+    </div>
+
+    <div class="uf">{{UF}}</div>
+
+    <div class="segmento-label">SEGMENTO DE CLIENTES:</div>
+    <div class="segmento-valor">{{SEGMENTO}}</div>
+
+  </div>
+
+</body>
+</html>
