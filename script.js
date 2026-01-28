@@ -1,95 +1,46 @@
-* {
-  box-sizing: border-box;
-  font-family: Inter, Arial, sans-serif;
-}
+const fileInput = document.getElementById('fileInput');
+const uploadBtn = document.getElementById('uploadBtn');
+const loading = document.getElementById('loading');
+const downloadBtn = document.getElementById('downloadBtn');
+const error = document.getElementById('error');
 
-body {
-  background: #0f172a;
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0;
-}
+fileInput.addEventListener('change', () => {
+  uploadBtn.disabled = !fileInput.files.length;
+});
 
-.container {
-  background: #020617;
-  padding: 40px;
-  border-radius: 16px;
-  width: 420px;
-  text-align: center;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
-}
+uploadBtn.addEventListener('click', async () => {
+  error.classList.add('hidden');
+  downloadBtn.classList.add('hidden');
 
-h1 {
-  color: #fff;
-  margin-bottom: 24px;
-}
+  const file = fileInput.files[0];
+  if (!file) return;
 
-input[type="file"] {
-  width: 100%;
-  padding: 10px;
-  background: #020617;
-  color: #fff;
-  border: 1px solid #334155;
-  border-radius: 8px;
-  margin-bottom: 20px;
-}
+  const formData = new FormData();
+  formData.append('file', file);
 
-button {
-  width: 100%;
-  padding: 14px;
-  border: none;
-  border-radius: 10px;
-  font-size: 16px;
-  font-weight: 700;
-  background: #22c55e;
-  color: #022c22;
-  cursor: pointer;
-}
+  uploadBtn.disabled = true;
+  loading.classList.remove('hidden');
 
-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
+  try {
+    const response = await fetch('/api/gerar', {
+      method: 'POST',
+      body: formData
+    });
 
-#downloadBtn {
-  display: block;
-  margin-top: 20px;
-  padding: 14px;
-  background: #2563eb;
-  color: #fff;
-  text-decoration: none;
-  border-radius: 10px;
-  font-weight: 700;
-}
+    if (!response.ok) {
+      throw new Error('Erro ao gerar os arquivos');
+    }
 
-.hidden {
-  display: none;
-}
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
 
-.error {
-  margin-top: 16px;
-  color: #f87171;
-}
-
-#loading {
-  margin-top: 20px;
-}
-
-.spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid #1e293b;
-  border-top: 4px solid #22c55e;
-  border-radius: 50%;
-  margin: 0 auto 10px;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
+    downloadBtn.href = url;
+    downloadBtn.classList.remove('hidden');
+  } catch (err) {
+    error.textContent = err.message;
+    error.classList.remove('hidden');
+  } finally {
+    loading.classList.add('hidden');
+    uploadBtn.disabled = false;
   }
-}
-
+});
