@@ -1,1 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>Gerador de Jornal de Ofertas</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
 
+  <div class="container">
+    <h1>Gerador de Jornal</h1>
+
+    <input type="file" id="fileInput" accept=".xlsx" />
+
+    <button id="uploadBtn" disabled>
+      Enviar planilha
+    </button>
+
+    <div id="loading" class="hidden">
+      <div class="spinner"></div>
+      <p>Gerando PDFs, aguarde...</p>
+    </div>
+
+    <a id="downloadBtn" class="hidden" download>
+      Baixar arquivos (.zip)
+    </a>
+
+    <p id="error" class="error hidden"></p>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
