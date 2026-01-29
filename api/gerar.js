@@ -1,106 +1,115 @@
-import formidable from 'formidable';
 import fs from 'fs';
 import path from 'path';
 import xlsx from 'xlsx';
-import puppeteer from 'puppeteer';
 import archiver from 'archiver';
+import puppeteer from 'puppeteer';
+import formidable from 'formidable';
 
 export const config = {
   api: {
-    bodyParser: false
-  }
+    bodyParser: false,
+  },
 };
 
-const ROOT = process.cwd();
-const TEMPLATES = path.join(ROOT, 'templates');
-const LOGOS = path.join(ROOT, 'logos');
-const TMP = path.join(ROOT, 'tmp');
-const OUTPUT = path.join(ROOT, 'output');
+const TMP_BASE = '/tmp';
+const TMP_HTML = path.join(TMP_BASE, 'html');
+const TMP_PDF = path.join(TMP_BASE, 'pdf');
+const TMP_ZIP = path.join(TMP_BASE, 'cards_jornal.zip');
 
 const upper = (v) => String(v || '').toUpperCase();
 
-function imageToBase64(imgPath) {
-  if (!fs.existsSync(imgPath)) return '';
-  const ext = path.extname(imgPath).replace('.', '');
-  const buffer = fs.readFileSync(imgPath);
+function ensureDir(dir) {
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+}
+
+function imageToBase64(imagePath) {
+  if (!fs.existsSync(imagePath)) return '';
+  const ext = path.extname(imagePath).replace('.', '');
+  const buffer = fs.readFileSync(imagePath);
   return `data:image/${ext};base64,${buffer.toString('base64')}`;
 }
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
-    res.status(405).end();
-    return;
+    return res.status(405).end();
   }
 
-  if (!fs.existsSync(TMP)) fs.mkdirSync(TMP);
-  if (!fs.existsSync(OUTPUT)) fs.mkdirSync(OUTPUT);
+  try {
+    ensureDir(TMP_HTML);
+    ensureDir(TMP_PDF);
 
-  const form = formidable({ multiples: false });
+    const form = formidable({ multiples: false });
 
-  form.parse(req, async (err, fields, files) => {
-    if (err) {
-      res.status(500).send('Erro no upload');
-      return;
+    const { files } = await new Promise((resolve, reject) => {
+      form.parse(req, (err, fields, files) => {
+        if (err) reject(err);
+        else resolve({ fields, files });
+      });
+    });
+
+    const file = files.file;
+    if (!file) {
+      return res.status(400).json({ error: 'Planilha não enviada' });
     }
 
-    const filePath = files.file.filepath;
-    const workbook = xlsx.readFile(filePath);
+    const workbook = xlsx.readFile(file.filepath);
     const sheet = workbook.Sheets[workbook.SheetNames[0]];
     const rows = xlsx.utils.sheet_to_json(sheet, { defval: '' });
 
     const browser = await puppeteer.launch({
-      args: ['--no-sandbox', '--disable-setuid-sandbox']
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
     });
 
     let index = 1;
 
     for (const row of rows) {
-      if (!row.TIPO && !row.tipo) continue;
+      if (!row.tipo) continue;
 
-      let tipo = upper(row.TIPO || row.tipo)
+      let tipo = String(row.tipo)
+        .toLowerCase()
         .normalize('NFD')
         .replace(/[\u0300-\u036f]/g, '');
 
-      if (tipo.includes('PROMO')) tipo = 'promocao';
-      else if (tipo.includes('CUPOM')) tipo = 'cupom';
-      else if (tipo.includes('QUEDA')) tipo = 'queda';
-      else if (tipo === 'BC') tipo = 'bc';
+      if (tipo.includes('promo')) tipo = 'promocao';
+      else if (tipo.includes('cupom')) tipo = 'cupom';
+      else if (tipo.includes('queda')) tipo = 'queda';
+      else if (tipo === 'bc') tipo = 'bc';
       else continue;
 
-      const templatePath = path.join(TEMPLATES, `${tipo}.html`);
+      const templatePath = path.join(process.cwd(), 'templates', `${tipo}.html`);
       if (!fs.existsSync(templatePath)) continue;
 
       let html = fs.readFileSync(templatePath, 'utf8');
 
-      const logoPath = path.join(LOGOS, row.LOGO || row.logo);
+      const logoPath = path.join(process.cwd(), 'logos', row.logo || '');
       const logoBase64 = imageToBase64(logoPath);
 
       html = html
         .replaceAll('{{LOGO}}', logoBase64)
-        .replaceAll('{{TEXTO}}', upper(row.TEXTO || row.texto))
-        .replaceAll('{{VALOR}}', upper(row.VALOR || row.valor))
-        .replaceAll('{{CUPOM}}', upper(row.CUPOM || row.cupom))
-        .replaceAll('{{LEGAL}}', upper(row.LEGAL || row.legal))
-        .replaceAll('{{UF}}', upper(row.UF || row.uf))
-        .replaceAll('{{SEGMENTO}}', upper(row.SEGMENTO || row.segmento));
+        .replaceAll('{{TEXTO}}', upper(row.texto))
+        .replaceAll('{{VALOR}}', upper(row.valor))
+        .replaceAll('{{CUPOM}}', upper(row.cupom))
+        .replaceAll('{{LEGAL}}', upper(row.legal))
+        .replaceAll('{{UF}}', upper(row.uf))
+        .replaceAll('{{SEGMENTO}}', upper(row.segmento));
 
-      const tmpHtml = path.join(TMP, `card_${index}.html`);
-      fs.writeFileSync(tmpHtml, html, 'utf8');
+      const htmlPath = path.join(TMP_HTML, `card_${index}.html`);
+      const pdfPath = path.join(TMP_PDF, `card_${String(index).padStart(3, '0')}.pdf`);
+
+      fs.writeFileSync(htmlPath, html);
 
       const page = await browser.newPage();
       await page.setViewport({ width: 1400, height: 2115 });
+      await page.goto(`file://${htmlPath}`, { waitUntil: 'networkidle0' });
 
-      await page.goto(`file://${tmpHtml}`, {
-        waitUntil: 'networkidle0'
-      });
-
-      // ⚠️ PDF COM UMA ÚNICA PÁGINA (SEM PÁGINA 2 EM BRANCO)
       await page.pdf({
-        path: path.join(OUTPUT, `card_${String(index).padStart(3, '0')}.pdf`),
+        path: pdfPath,
         width: '1400px',
         height: '2115px',
+        printBackground: true,
         pageRanges: '1',
-        printBackground: true
       });
 
       await page.close();
@@ -109,19 +118,21 @@ export default async function handler(req, res) {
 
     await browser.close();
 
-    // 📦 ZIP FINAL
-    const zipPath = path.join(OUTPUT, 'cards_jornal.zip');
-    const output = fs.createWriteStream(zipPath);
+    const output = fs.createWriteStream(TMP_ZIP);
     const archive = archiver('zip', { zlib: { level: 9 } });
 
     archive.pipe(output);
-    archive.directory(OUTPUT, false);
+    archive.directory(TMP_PDF, false);
     await archive.finalize();
+
+    const zipBuffer = fs.readFileSync(TMP_ZIP);
 
     res.setHeader('Content-Type', 'application/zip');
     res.setHeader('Content-Disposition', 'attachment; filename=cards_jornal.zip');
+    res.status(200).send(zipBuffer);
 
-    fs.createReadStream(zipPath).pipe(res);
-  });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Erro ao gerar os arquivos' });
+  }
 }
-
